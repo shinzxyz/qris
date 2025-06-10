@@ -1,71 +1,57 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const generateBtn = document.getElementById('generateBtn');
-  const qrDataInput = document.getElementById('qrData');
+  const qrDataInput = document.getElementById('qr-data');
   const nominalInput = document.getElementById('nominal');
-  const resultDiv = document.getElementById('result');
-  const qrImage = document.getElementById('qrImage');
-  const qrNominal = document.getElementById('qrNominal');
-  const qrExpires = document.getElementById('qrExpires');
-  const directLinkUrl = document.getElementById('directLinkUrl');
+  const generateBtn = document.getElementById('generate-btn');
+  const qrResult = document.getElementById('qr-result');
+  const qrCodeContainer = document.getElementById('qr-code');
+  const qrUrlContainer = document.getElementById('qr-url');
+  const copyBtn = document.getElementById('copy-btn');
 
   generateBtn.addEventListener('click', generateQRCode);
+  copyBtn.addEventListener('click', copyQRUrl);
 
   function generateQRCode() {
-    const qrData = qrDataInput.value.trim();
+    const data = qrDataInput.value.trim();
     const nominal = nominalInput.value.trim();
-    
-    if (!qrData) {
+
+    if (!data) {
       alert('Please enter QR code data');
       return;
     }
-    
-    // Build the query parameters
-    const params = new URLSearchParams();
-    params.append('code', qrData);
-    if (nominal) {
-      params.append('nominal', nominal);
-    }
-    
-    fetch(`/qrcode?${params.toString()}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Display the QR code
-        qrImage.src = data.qrImage;
-        qrNominal.textContent = data.nominal || '-';
-        
-        // Format expiration date
-        const expiresDate = new Date(data.expiresAt);
-        qrExpires.textContent = expiresDate.toLocaleString();
-        
-        // Create direct link
-        const directLink = `${window.location.origin}/qrcode?code=${encodeURIComponent(qrData)}${nominal ? `&nominal=${nominal}` : ''}`;
-        directLinkUrl.href = directLink;
-        directLinkUrl.textContent = directLink;
-        
-        // Show result
-        resultDiv.classList.remove('hidden');
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to generate QR code. Please try again.');
-      });
+
+    // Generate QR code locally for display
+    QRCode.toDataURL(data, {
+      width: 300,
+      margin: 2
+    }, (err, url) => {
+      if (err) {
+        console.error(err);
+        alert('Error generating QR code');
+        return;
+      }
+
+      qrCodeContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
+      
+      // Generate the URL for the API endpoint
+      let apiUrl = `${window.location.origin}/qrcode?code=${encodeURIComponent(data)}`;
+      if (nominal) {
+        apiUrl += `&nominal=${encodeURIComponent(nominal)}`;
+      }
+      
+      qrUrlContainer.textContent = apiUrl;
+      qrResult.style.display = 'block';
+    });
   }
-  
-  // Check if there are URL parameters to auto-generate QR code
-  const urlParams = new URLSearchParams(window.location.search);
-  const codeParam = urlParams.get('code');
-  const nominalParam = urlParams.get('nominal');
-  
-  if (codeParam) {
-    qrDataInput.value = codeParam;
-    if (nominalParam) {
-      nominalInput.value = nominalParam;
-    }
-    generateQRCode();
+
+  function copyQRUrl() {
+    const url = qrUrlContainer.textContent;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        alert('URL copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy URL');
+      });
   }
 });

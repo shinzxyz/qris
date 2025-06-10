@@ -10,31 +10,23 @@
   <div class="container">
     <h1>QR Code Generator</h1>
     <div class="form-group">
-      <label for="qrData">QR Code Data:</label>
-      <textarea id="qrData" rows="5" placeholder="Enter QR code data here..."></textarea>
+      <label for="qr-data">QR Code Data:</label>
+      <textarea id="qr-data" placeholder="Enter QR code data"></textarea>
     </div>
     <div class="form-group">
       <label for="nominal">Nominal (optional):</label>
-      <input type="number" id="nominal" placeholder="Enter amount...">
+      <input type="number" id="nominal" placeholder="Enter nominal amount">
     </div>
-    <button id="generateBtn">Generate QR Code</button>
+    <button id="generate-btn">Generate QR Code</button>
     
-    <div id="result" class="hidden">
-      <h2>Your QR Code</h2>
-      <div id="qrImageContainer">
-        <img id="qrImage" src="" alt="Generated QR Code">
-      </div>
-      <div id="qrInfo">
-        <p>Nominal: <span id="qrNominal">-</span></p>
-        <p>Expires at: <span id="qrExpires">-</span></p>
-      </div>
-      <div id="directLink">
-        <h3>Direct Link:</h3>
-        <a id="directLinkUrl" href="" target="_blank"></a>
-      </div>
+    <div id="qr-result">
+      <div id="qr-code"></div>
+      <div id="qr-url"></div>
+      <button id="copy-btn">Copy QR URL</button>
     </div>
   </div>
   
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
