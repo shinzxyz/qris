@@ -3,7 +3,7 @@
   "routes": [
     {
       "src": "/qrcode",
-      "dest": "/api/qrcode"
+      "dest": "/api/qrcode.js"
     },
     {
       "src": "/(.*)",

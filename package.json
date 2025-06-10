@@ -1,15 +1,13 @@
 {
-  "name": "qr-code-generator",
+  "name": "qrcode-generator",
   "version": "1.0.0",
-  "description": "QR Code Generator with expiration",
   "scripts": {
-    "start": "vercel dev"
+    "dev": "serve public"
   },
   "dependencies": {
-    "qrcode": "^1.5.1",
-    "uuid": "^8.3.2"
+    "qrcode": "^1.5.1"
   },
   "devDependencies": {
-    "vercel": "^28.4.7"
+    "serve": "^14.2.0"
   }
 }
