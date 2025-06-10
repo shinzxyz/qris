@@ -11,30 +11,37 @@ document.addEventListener('DOMContentLoaded', function() {
   copyBtn.addEventListener('click', copyQRUrl);
 
   function generateQRCode() {
-  const data = qrDataInput.value.trim();
-  const nominal = nominalInput.value.trim();
+    const data = qrDataInput.value.trim();
+    const nominal = nominalInput.value.trim();
 
-  if (!data) {
-    alert('Harap masukkan data QR code');
-    return;
-  }
-
-  // Generate QR code
-  QRCode.toDataURL(data, {
-    width: 300,
-    margin: 2
-  }, (err, url) => {
-    if (err) {
-      console.error(err);
-      alert('Error membuat QR code');
+    if (!data) {
+      alert('Please enter QR code data');
       return;
     }
 
-    qrCodeContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
-    qrUrlContainer.textContent = data; // Tampilkan data asli
-    qrResult.style.display = 'block';
-  });
-}
+    // Generate QR code locally for display
+    QRCode.toDataURL(data, {
+      width: 300,
+      margin: 2
+    }, (err, url) => {
+      if (err) {
+        console.error(err);
+        alert('Error generating QR code');
+        return;
+      }
+
+      qrCodeContainer.innerHTML = `<img src="${url}" alt="QR Code">`;
+      
+      // Generate the URL for the API endpoint
+      let apiUrl = `${window.location.origin}/qrcode?code=${encodeURIComponent(data)}`;
+      if (nominal) {
+        apiUrl += `&nominal=${encodeURIComponent(nominal)}`;
+      }
+      
+      qrUrlContainer.textContent = apiUrl;
+      qrResult.style.display = 'block';
+    });
+  }
 
   function copyQRUrl() {
     const url = qrUrlContainer.textContent;
